@@ -23,3 +23,8 @@ To start, run
 ```
 docker compose up --build --force-recreate
 ```
+
+## Contributing
+
+**Do not commit to master**
+(please)
