@@ -1,5 +1,5 @@
 import Discord, { Client, Intents } from 'discord.js';
-const client = new Discord.Client();
+const client = new Discord.Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES]});
 
 import dotenv from 'dotenv';
 
