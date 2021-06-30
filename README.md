@@ -26,11 +26,11 @@ docker compose up --build --force-recreate
 
 ## Adding a (Slash) Command
 
-To add a command you must register it as a slash command, and add handling for when the command is called
+To add a command you must register it as a slash command, and add handling for when the command is called.
 
 ### Registering the Command
 
-Just add your commands name & description to this array in the registerSlashCommands() function, then type ~registerslashcommands (all lower case) somewhere where the bot can see it. You should recive confimation.
+Just add your commands name & description to this array in the registerSlashCommands() function, then type `~registerslashcommands` (all lower case) somewhere where the bot can see it. You should recive confimation.
 ```typescript
 const data = [
     {
