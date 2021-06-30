@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 
 dotenv.config()
 
+const DevIDs = ["170960451704717312"/*dislocated*/, "428934780764160010"/*tomkettle*/]
+
 client.on('ready', () => {
     console.log(`Logged in as ${client.user ? client.user.tag : "null"}!`);
 });
@@ -16,6 +18,7 @@ client.on('message', async message => {
         return;
     }
     if (message.content === '~registerslashcommands') { //Register slash commands
+        if (!DevIDs.includes(message.author.id)) return; // Check if author is a bot dev
         await registerSlashCommands(message);
         return;
     }
@@ -23,6 +26,9 @@ client.on('message', async message => {
 
 client.on('interaction', async interaction => { // stolen from https://deploy-preview-638--discordjs-guide.netlify.app/interactions/replying-to-slash-commands.html
 	if (!interaction.isCommand()) return;
+
+    console.log("Command called: "+interaction.commandName);
+
 	if (interaction.commandName === 'ping') await interaction.reply('Pong!');
     // Calls to other command functions go here. Unless your command is a very simple single line (such as with /ping), please call a seperate function
 });
