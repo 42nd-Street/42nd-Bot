@@ -17,8 +17,6 @@ client.on('message', async message => {
     }
     if (message.content === '~registerslashcommands') { //Register slash commands
         await registerSlashCommands(message);
-        // message.channel.send('pong');
-        // console.log('pong');
         return;
     }
 });
@@ -26,6 +24,7 @@ client.on('message', async message => {
 client.on('interaction', async interaction => { // stolen from https://deploy-preview-638--discordjs-guide.netlify.app/interactions/replying-to-slash-commands.html
 	if (!interaction.isCommand()) return;
 	if (interaction.commandName === 'ping') await interaction.reply('Pong!');
+    // Calls to other command functions go here. Unless your command is a very simple single line (such as with /ping), please call a seperate function
 });
 
 client.login(process.env.DISCORD_TOKEN);
@@ -43,21 +42,13 @@ async function registerSlashCommands(message: Discord.Message){ //async function
             description: 'Test command, replies with pong.',
         } // ,
         // {
-        //     name: 'pong',
-        //     description: 'Replies with Ping!',
+        //     name: '',
+        //     description: '',
         // },
     ];
 
     const commands = await client.application?.commands.set(data);
     console.log(commands);
-    
-    // const data = {
-    //     name: 'ping',
-    //     description: 'Test command, replies with pong.',
-    // };
-
-    // const command = await client.application?.commands.create(data);
-    // console.log(command);
 
     message.reply("Added commands");
 }
