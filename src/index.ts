@@ -36,6 +36,8 @@ async function registerSlashCommands(message: Discord.Message){ //async function
     await client.application?.fetch();
     
     // stolen from https://deploy-preview-638--discordjs-guide.netlify.app/interactions/registering-slash-commands.html
+    
+    // Please add your command name & desc. here. CAREFUL! As of right now it looks like a huge pain to delete these, so add carefully
     const data = [
         {
             name: 'ping',
