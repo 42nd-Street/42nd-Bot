@@ -42,7 +42,7 @@ async function registerSlashCommands(message: Discord.Message){
 
     await client.application?.fetch();
     
-    // Please add your command name & desc. here. CAREFUL! As of right now it looks like a huge pain to delete these, so add carefully
+    // Please add your command name & description here. 
     const data = [
         {
             name: 'ping',
