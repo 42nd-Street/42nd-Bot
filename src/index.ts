@@ -29,13 +29,12 @@ client.on('interaction', async interaction => { // stolen from https://deploy-pr
 
 client.login(process.env.DISCORD_TOKEN);
 
-async function registerSlashCommands(message: Discord.Message){ //async function so it doesn't shout at me
-
+async function registerSlashCommands(message: Discord.Message){
+    // see https://deploy-preview-638--discordjs-guide.netlify.app/interactions/registering-slash-commands.html
+    
     // IMPORTANT: Remember to give the bot perms to create slash commands w/ the oauth page (application.commands privileges)
 
     await client.application?.fetch();
-    
-    // stolen from https://deploy-preview-638--discordjs-guide.netlify.app/interactions/registering-slash-commands.html
     
     // Please add your command name & desc. here. CAREFUL! As of right now it looks like a huge pain to delete these, so add carefully
     const data = [
