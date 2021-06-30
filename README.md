@@ -50,8 +50,8 @@ Put you're own if statement checking for the command being called here, where yo
 
 ```typescript
 client.on('interaction', async interaction => {
-	if (!interaction.isCommand()) return;
-	if (interaction.commandName === 'ping') await interaction.reply('Pong!');
+    if (!interaction.isCommand()) return;
+    if (interaction.commandName === 'ping') await interaction.reply('Pong!');
     if (interaction.commandName === 'ping') await yourFunction(interaction); // You may not need to pass the interaction through, depending on what your command is doing
 });
 ```
