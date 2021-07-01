@@ -23,7 +23,7 @@ const messageHandlers: {name: string; match: (msg: Discord.Message) => boolean; 
 function AutoreplyEmbedsGen(name:string, imgurl:string, msg:Discord.Message){
     const embed = new Discord.MessageEmbed()
         .setImage(imgurl)
-        .setFooter(name+" from "+msg.author.username); // Can put a link here if we want (idk what)
+        .setFooter(name+" from "+msg.author.tag); // Can put a link here if we want (idk what)
     return { embeds: [embed] };
 }
 
@@ -64,6 +64,7 @@ client.on('message', async message => {
 
     messageHandlers.forEach(handler => {
         if (handler.match(message)){
+            console.log("Match for message handler: '"+handler.name+"'")
             handler.execute(message);
         }
     });
