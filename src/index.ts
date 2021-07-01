@@ -20,7 +20,12 @@ function niceMatch(msg: Discord.Message):boolean {
     else return false;
 }
 function niceExecute(msg: Discord.Message) {
-    msg.reply("nice.jpg");
+    // Note: As of writing (1/7/21) info on the new embed sytem is not properly documented
+    const embed = new Discord.MessageEmbed()
+        .setImage("https://cdn.discordapp.com/attachments/367021334217359361/455826116943413262/nice.png")
+        .setFooter("Nice from "+msg.author.username); // Can put a link here if we want (idk what)
+    msg.channel.send({ embeds: [embed] });
+    msg.delete();
 }
 
 client.on('ready', () => {
