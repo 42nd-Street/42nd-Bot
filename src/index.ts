@@ -9,22 +9,40 @@ const DevIDs = ["170960451704717312"/*dislocated*/, "428934780764160010"/*tomket
 
 const messageHandlers: {name: string; match: (msg: Discord.Message) => boolean; execute: (msg: Discord.Message) => void}[] = [
     {
-        "name": "nice", //name for our reference only
+        "name": "nice autoreply", //name for our reference only
         "match": niceMatch,
         "execute": niceExecute
+    },
+    {
+        "name": "woob autoreply",
+        "match": woobMatch,
+        "execute": woobExecute
     }
 ];
 
+function AutoreplyEmbedsGen(name:string, imgurl:string, msg:Discord.Message){
+    const embed = new Discord.MessageEmbed()
+        .setImage(imgurl)
+        .setFooter(name+" from "+msg.author.username); // Can put a link here if we want (idk what)
+    return { embeds: [embed] };
+}
+
 function niceMatch(msg: Discord.Message):boolean {
-    if (msg.content === "nice") return true;
+    if (msg.content.toLowerCase() === "nice") return true;
     else return false;
 }
 function niceExecute(msg: Discord.Message) {
     // Note: As of writing (1/7/21) info on the new embed sytem is not properly documented
-    const embed = new Discord.MessageEmbed()
-        .setImage("https://cdn.discordapp.com/attachments/367021334217359361/455826116943413262/nice.png")
-        .setFooter("Nice from "+msg.author.username); // Can put a link here if we want (idk what)
-    msg.channel.send({ embeds: [embed] });
+    msg.channel.send(AutoreplyEmbedsGen("Nice", "https://cdn.discordapp.com/attachments/367021334217359361/455826116943413262/nice.png", msg))
+    msg.delete();
+}
+
+function woobMatch(msg: Discord.Message):boolean {
+    if (msg.content.toLowerCase() === "woob") return true;
+    else return false;
+}
+function woobExecute(msg: Discord.Message) {
+    msg.channel.send(AutoreplyEmbedsGen("WOOB", "https://cdn.discordapp.com/attachments/367021334217359361/587651957368291331/woobSmall.png", msg))
     msg.delete();
 }
 
