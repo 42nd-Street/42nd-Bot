@@ -5,7 +5,11 @@ import dotenv from 'dotenv';
 
 dotenv.config()
 
-const DevIDs = ["170960451704717312"/*dislocated*/, "428934780764160010"/*tomkettle*/]
+const DevIDs = ["170960451704717312"/*dislocated*/, "428934780764160010"/*tomkettle*/, "213389120829915136"/*tim*/]
+
+const ReactionImages: { [key: string]: string; } = { // May be good to move to seperate file later on
+    "nice": "https://cdn.discordapp.com/attachments/367021334217359361/455826116943413262/nice.png"
+}
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user ? client.user.tag : "null"}!`);
@@ -21,6 +25,10 @@ client.on('message', async message => {
         if (!DevIDs.includes(message.author.id)) return; // Check if author is a bot dev
         await registerSlashCommands(message);
         return;
+    }
+    if (message.content in ReactionImages){
+        // message.reply(ReactionImages[message.content]);
+        message.reply(ReactionImages[message.content]);
     }
 });
 
