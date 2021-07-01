@@ -7,12 +7,28 @@ dotenv.config()
 
 const DevIDs = ["170960451704717312"/*dislocated*/, "428934780764160010"/*tomkettle*/]
 
+const messageHandlers: {name: string; match: (msg: Discord.Message) => boolean; execute: (msg: Discord.Message) => void}[] = [
+    {
+        "name": "nice", //name for our reference only
+        "match": niceMatch,
+        "execute": niceExecute
+    }
+];
+
+function niceMatch(msg: Discord.Message):boolean {
+    if (msg.content === "nice") return true;
+    else return false;
+}
+function niceExecute(msg: Discord.Message) {
+    msg.reply("nice.jpg");
+}
+
 client.on('ready', () => {
     console.log(`Logged in as ${client.user ? client.user.tag : "null"}!`);
 });
 
 client.on('message', async message => {
-    if (message.content === 'ping') { //Debug test code, see if its still breathing
+    if (message.content === 'ping') { //Debug test code, see if its still breathing, plz don't touch
         message.channel.send('pong');
         console.log('pong');
         return;
@@ -22,7 +38,14 @@ client.on('message', async message => {
         await registerSlashCommands(message);
         return;
     }
+
+    messageHandlers.forEach(handler => {
+        if (handler.match(message)){
+            handler.execute(message);
+        }
+    });
 });
+
 
 client.on('interaction', async interaction => { // stolen from https://deploy-preview-638--discordjs-guide.netlify.app/interactions/replying-to-slash-commands.html
 	if (!interaction.isCommand()) return;
