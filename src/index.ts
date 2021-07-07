@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 
 dotenv.config()
 
-const DevIDs = ["170960451704717312"/*dislocated*/, "428934780764160010"/*tomkettle*/]
+const DevIDs = ["170960451704717312"/*dislocated*/, "428934780764160010"/*tomkettle*/, "213389120829915136"/*tim*/]
 
 const messageHandlers: {name: string; match: (msg: Discord.Message) => boolean; execute: (msg: Discord.Message) => void}[] = [
     {
