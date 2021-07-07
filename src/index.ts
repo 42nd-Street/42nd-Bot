@@ -112,9 +112,9 @@ async function registerSlashCommands(message: Discord.Message){
 
 function adminTest(interaction: Discord.CommandInteraction){
     if (DevIDs.includes(interaction.user.id.toString())){
-        interaction.reply(`Yes, you are an admin. (ID: ${interaction.user.id.toString()})`);
+        interaction.reply("Yes, you are an admin.");
     }
     else {
-        interaction.reply(`Nope, not an admin. (ID: ${interaction.user.id.toString()}), (Admin IDs: ${JSON.stringify(DevIDs)})`);
+        interaction.reply("Nope, not an admin.");
     }
 }
