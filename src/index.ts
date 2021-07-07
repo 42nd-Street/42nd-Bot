@@ -22,6 +22,17 @@ const messageHandlers: {name: string; match: (msg: Discord.Message) => boolean; 
     }
 ];
 
+const slashCommandHandlers: {command: string; execute: (interaction: Discord.CommandInteraction) => void}[] = [
+    {
+        "command": "ping",
+        "execute": pingExecute
+    },
+    {
+        "command": "admintest",
+        "execute": admintestExecute
+    }
+];
+
 function AutoreplyEmbedsGen(name:string, imgurl:string, msg:Discord.Message){
     const embed = new Discord.MessageEmbed()
         .setImage(imgurl)
@@ -78,9 +89,15 @@ client.on('interaction', async interaction => { // stolen from https://deploy-pr
 
     console.log("Command called: "+interaction.commandName);
 
-	if (interaction.commandName === 'ping') await interaction.reply('Pong!');
-    if (interaction.commandName === 'admintest') adminTest(interaction);
+	// if (interaction.commandName === 'ping') await interaction.reply('Pong!');
+    // if (interaction.commandName === 'admintest') admintestExecute(interaction);
     // Calls to other command functions go here. Unless your command is a very simple single line (such as with /ping), please call a seperate function
+
+    slashCommandHandlers.forEach(handler => {
+        if (interaction.commandName === handler.command){
+            handler.execute(interaction);
+        }
+    })
 });
 
 client.login(process.env.DISCORD_TOKEN);
@@ -110,11 +127,14 @@ async function registerSlashCommands(message: Discord.Message){
     message.reply("Added commands");
 }
 
-function adminTest(interaction: Discord.CommandInteraction){
+function admintestExecute(interaction: Discord.CommandInteraction){
     if (DevIDs.includes(interaction.user.id.toString())){
-        interaction.reply("Yes, you are an admin.");
+        interaction.reply(`Yes, you are an admin.(ID: ${interaction.user.id.toString()}, Dev IDs: ${JSON.stringify(DevIDs)})`);
     }
     else {
-        interaction.reply("Nope, not an admin.");
+        interaction.reply(`Nope, not an admin. (ID: ${interaction.user.id.toString()}, Dev IDs: ${JSON.stringify(DevIDs)})`);
     }
+}
+function pingExecute(interaction: Discord.CommandInteraction){
+    interaction.reply("Pong!");
 }
