@@ -7,7 +7,7 @@ dotenv.config()
 
 // const DevIDs = ["170960451704717312"/*dislocated*/, "428934780764160010"/*tomkettle*/, "213389120829915136"/*tim*/]
 // const DevIDs:string[] = JSON.parse(process.env.ADMIN_DISCORD_IDS!); //Exclamation mark tells ts this var will never be null https://stackoverflow.com/a/57062363/15243027
-const DevIDs:string[] = process.env.ADMIN_DISCORD_IDS?.split(", ")!; //Exclamation mark tells ts this var will never be null https://stackoverflow.com/a/57062363/15243027
+const DevIDs:string[] = process.env.DISCORD_ADMIN_IDS?.split(", ")!; //Exclamation mark tells ts this var will never be null https://stackoverflow.com/a/57062363/15243027
 
 const messageHandlers: {name: string; match: (msg: Discord.Message) => boolean; execute: (msg: Discord.Message) => void}[] = [
     {
@@ -33,10 +33,11 @@ const slashCommandHandlers: {command: string; execute: (interaction: Discord.Com
     }
 ];
 
-function AutoreplyEmbedsGen(name:string, imgurl:string, msg:Discord.Message){
+function AutoreplyEmbedsGen(name:string, imgurl:string, msg:Discord.Message, link?: string){
     const embed = new Discord.MessageEmbed()
         .setImage(imgurl)
         .setFooter(name+" from "+msg.author.tag); // Can put a link here if we want (idk what)
+    if (link) embed.setURL(link);
     return { embeds: [embed] };
 }
 
@@ -70,7 +71,10 @@ client.on('message', async message => {
         return;
     }
     if (message.content === '~registerslashcommands') { //Register slash commands
-        if (!DevIDs.includes(message.author.id)) return; // Check if author is a bot dev
+        if (!DevIDs.includes(message.author.id)) {
+            message.reply("Not Dev")
+            return; // Check if author is a bot dev
+        }
         await registerSlashCommands(message);
         return;
     }
