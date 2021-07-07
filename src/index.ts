@@ -5,7 +5,9 @@ import dotenv from 'dotenv';
 
 dotenv.config()
 
-const DevIDs = ["170960451704717312"/*dislocated*/, "428934780764160010"/*tomkettle*/, "213389120829915136"/*tim*/]
+// const DevIDs = ["170960451704717312"/*dislocated*/, "428934780764160010"/*tomkettle*/, "213389120829915136"/*tim*/]
+// const DevIDs:string[] = JSON.parse(process.env.ADMIN_DISCORD_IDS!); //Exclamation mark tells ts this var will never be null https://stackoverflow.com/a/57062363/15243027
+const DevIDs:string[] = process.env.ADMIN_DISCORD_IDS?.split(", ")!; //Exclamation mark tells ts this var will never be null https://stackoverflow.com/a/57062363/15243027
 
 const messageHandlers: {name: string; match: (msg: Discord.Message) => boolean; execute: (msg: Discord.Message) => void}[] = [
     {
@@ -77,6 +79,7 @@ client.on('interaction', async interaction => { // stolen from https://deploy-pr
     console.log("Command called: "+interaction.commandName);
 
 	if (interaction.commandName === 'ping') await interaction.reply('Pong!');
+    if (interaction.commandName === 'admintest') adminTest(interaction);
     // Calls to other command functions go here. Unless your command is a very simple single line (such as with /ping), please call a seperate function
 });
 
@@ -94,15 +97,24 @@ async function registerSlashCommands(message: Discord.Message){
         {
             name: 'ping',
             description: 'Test command, replies with pong.',
-        } // ,
-        // {
-        //     name: '',
-        //     description: '',
-        // },
+        },
+        {
+            name: 'admintest',
+            description: 'Test command, see if you\'ve been set as a bot developer',
+        },
     ];
 
     const commands = await client.application?.commands.set(data);
     console.log(commands);
 
     message.reply("Added commands");
+}
+
+function adminTest(interaction: Discord.CommandInteraction){
+    if (DevIDs.includes(interaction.user.id.toString())){
+        interaction.reply(`Yes, you are an admin. (ID: ${interaction.user.id.toString()})`);
+    }
+    else {
+        interaction.reply(`Nope, not an admin. (ID: ${interaction.user.id.toString()}), (Admin IDs: ${JSON.stringify(DevIDs)})`);
+    }
 }
