@@ -1,25 +1,16 @@
-import Discord, { Client, Collection, Intents, Message } from 'discord.js';
+import Discord, { ApplicationCommandData, Client, Collection, Intents, Message, Snowflake, SnowflakeUtil } from 'discord.js';
 const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES] });
 
 import dotenv from 'dotenv';
-import {msgEvent} from './shared/events'
+import { cmdEvent, msgEvent } from './shared/interfaces'
 
 dotenv.config()
 
-const DevIDs: string[] = process.env.DISCORD_ADMIN_IDS?.split(", ")!;
+export const DevIDs: string[] = process.env.DISCORD_ADMIN_IDS?.split(", ")!;
+const Dev: boolean = process.env.NODE_ENV === "dev"
 
-const commands: Collection<(msg: Message)=> boolean, (event: msgEvent) => any> = new Collection();
-
-const slashCommandHandlers: { command: string; execute: (interaction: Discord.CommandInteraction) => void }[] = [
-    {
-        "command": "ping",
-        "execute": pingExecute
-    },
-    {
-        "command": "admintest",
-        "execute": admintestExecute
-    }
-];
+const messageReplies: Collection<(msg: Message) => boolean, (event: msgEvent) => any> = new Collection();
+const slashCommands: Collection<ApplicationCommandData, (event: cmdEvent) => any> = new Collection();
 
 import fs from 'fs'
 
@@ -28,10 +19,22 @@ fs.readdir('./dist/commands/message', (err, allFiles) => {
 
     let files = allFiles.filter(f => f.split('.').pop() === ('js')); // ignore .js.map files
 
-    if (files.length <= 0) console.log('No commands found!');
+    if (files.length <= 0) console.log('No message replies found!');
     else for (let file of files) {
         const props = require(`./commands/message/${file}`) as { match: (msg: Message) => boolean, run: (event: msgEvent) => any };
-        commands.set(props.match, props.run);
+        messageReplies.set(props.match, props.run);
+    }
+});
+
+fs.readdir('./dist/commands/slash', (err, allFiles) => {
+    if (err) console.log(err);
+
+    let files = allFiles.filter(f => f.split('.').pop() === ('js')); // ignore .js.map files
+
+    if (files.length <= 0) console.log('No commands found!');
+    else for (let file of files) {
+        const props = require(`./commands/slash/${file}`) as { data: ApplicationCommandData, run: (event: cmdEvent) => any };
+        slashCommands.set(props.data, props.run);
     }
 });
 
@@ -55,58 +58,53 @@ client.on('messageCreate', async msg => {
     }
 
     // Command handler
-    const commandModule = commands.find((_run, match) => match(msg))
-    if (commandModule) commandModule({ msg, client })
+    const commandModule = messageReplies.find((_run, match) => match(msg));
+    if (commandModule) commandModule({ msg, client });
 
 });
 
-client.on('interaction', async interaction => { // stolen from https://deploy-preview-638--discordjs-guide.netlify.app/interactions/replying-to-slash-commands.html
+client.on('interactionCreate', async interaction => { // stolen from https://deploy-preview-638--discordjs-guide.netlify.app/interactions/replying-to-slash-commands.html
     if (!interaction.isCommand()) return;
 
     console.log("Command called: " + interaction.commandName);
 
-    slashCommandHandlers.forEach(handler => {
-        if (interaction.commandName === handler.command) {
-            handler.execute(interaction);
-        }
-    })
+    const commandModule = slashCommands.find((_run, data) => interaction.commandName === data.name);
+    if (commandModule) commandModule({ interaction, client });
+    
 });
-
-client.login(process.env.DISCORD_TOKEN);
 
 async function registerSlashCommands(msg: Discord.Message) {
     // see https://deploy-preview-638--discordjs-guide.netlify.app/interactions/registering-slash-commands.html
 
-    // IMPORTANT: Remember to give the bot perms to create slash commands w/ the oauth page (application.commands privileges)
+    // IMPORTANT: Remember to give the bot perms to create slash commands using the oauth page (application.commands privileges)
 
     await client.application?.fetch();
 
-    // Please add your command name & description here. 
-    const data = [
-        {
-            name: 'ping',
-            description: 'Test command, replies with pong.',
-        },
-        {
-            name: 'admintest',
-            description: 'Test command, see if you\'ve been set as a bot developer',
-        },
-    ];
+    let data: Discord.ApplicationCommandData[] = [];
 
-    const commands = await client.application?.commands.set(data);
-    console.log(commands);
+    for (const v of slashCommands.entries()) {
+        data.push(v[0] as ApplicationCommandData);
+    }
 
+    // Setting global commands can take up to an hour so this should speed up the process.
+    // see: https://gist.github.com/advaith1/287e69c3347ef5165c0dbde00aa305d2#global-commands
+
+    if (!Dev) {
+        // Set commands as global
+        await client.application?.commands.set(data);
+    }
+    else {
+
+        // set a custom test server or our default (leaving this here for convienience)
+        // why are snowflakes so hard to parse
+        const guildID: Snowflake = `${BigInt(process.env.DISCORD_TEST_GUILDID || '859489322587521054')}`;
+        // Set commands as test server-only
+        const guild = await client.guilds.fetch(guildID);
+        const commands = await guild.commands.set(data);
+        console.log(commands);
+    }
+    
     msg.reply("Added commands");
 }
 
-function admintestExecute(interaction: Discord.CommandInteraction) {
-    if (DevIDs.includes(interaction.user.id.toString())) {
-        interaction.reply(`Yes, you are an admin.(ID: ${interaction.user.id.toString()}, Dev IDs: ${JSON.stringify(DevIDs)})`);
-    }
-    else {
-        interaction.reply(`Nope, not an admin. (ID: ${interaction.user.id.toString()}, Dev IDs: ${JSON.stringify(DevIDs)})`);
-    }
-}
-function pingExecute(interaction: Discord.CommandInteraction) {
-    interaction.reply("Pong!");
-}
+client.login(process.env.DISCORD_TOKEN);

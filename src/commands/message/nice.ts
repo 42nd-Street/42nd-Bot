@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { msgEvent } from '../../shared/events';
+import { msgEvent } from '../../shared/interfaces';
 import { AutoreplyEmbedGen } from '../../shared/embed';
 
 export function run(e: msgEvent) {
