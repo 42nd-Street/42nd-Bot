@@ -19,7 +19,7 @@ fs.readdir('./dist/commands/message', (err, allFiles) => {
 
     let files = allFiles.filter(f => f.split('.').pop() === ('js')); // ignore .js.map files
 
-    if (files.length <= 0) console.log('No message replies found!');
+    if (files.length <= 0) console.log('No message handlers found!');
     else for (let file of files) {
         const props = require(`./commands/message/${file}`) as { match: (msg: Message) => boolean, run: (event: msgEvent) => any };
         messageReplies.set(props.match, props.run);
