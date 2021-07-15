@@ -1,5 +1,5 @@
 import Discord, { ApplicationCommandData, Client, Collection, Intents, Message, Snowflake, SnowflakeUtil } from 'discord.js';
-const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES] });
+const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 
 import dotenv from 'dotenv';
 import { cmdEvent, msgEvent } from './shared/interfaces'

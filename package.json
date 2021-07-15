@@ -11,8 +11,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@discordjs/opus": "^0.5.3",
+    "@discordjs/voice": "^0.5.4",
     "discord.js": "dev",
     "dotenv": "^10.0.0",
+    "libsodium-wrappers": "^0.7.9",
     "typescript": "^4.3.4"
   },
   "devDependencies": {
