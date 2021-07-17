@@ -10,6 +10,7 @@ import {
 	AudioPlayer,
 } from '@discordjs/voice';
 import { createDiscordJSAdapter } from './adapter';
+import { Readable } from 'stream';
 
 /*
 	In this example, we are creating a single audio player that plays to a number of
@@ -22,7 +23,7 @@ import { createDiscordJSAdapter } from './adapter';
 */
 // const player = createAudioPlayer();
 
-export function playSong(player: AudioPlayer ,url: string) {
+export function playSong(player: AudioPlayer , input: string | Readable) {
 	/*
 		Here we are creating an audio resource using a sample song freely available online
 		(see https://www.soundhelix.com/audio-examples)
@@ -31,7 +32,7 @@ export function playSong(player: AudioPlayer ,url: string) {
 		were using an Ogg or WebM source, then we could change this value. However, for now we
 		will leave this as arbitrary.
 	*/
-	const resource = createAudioResource(url, {
+	const resource = createAudioResource(input, {
 		inputType: StreamType.Arbitrary,
 	});
 

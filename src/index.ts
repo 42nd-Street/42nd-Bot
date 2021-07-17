@@ -107,8 +107,14 @@ async function registerSlashCommands(msg: Discord.Message) {
         const guildID: Snowflake = `${BigInt(process.env.DISCORD_TEST_GUILDID || '859489322587521054')}`;
         // Set commands as test server-only
         const guild = await client.guilds.fetch(guildID);
+
+        // clear commands just in case
+        await guild.commands.fetch().then((commands) => {
+            commands.forEach(command => command.delete());
+        });
+
         const commands = await guild.commands.set(data);
-        console.log(commands);
+        console.log(commands)
     }
 
     msg.reply("Added commands");
