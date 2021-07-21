@@ -3,7 +3,7 @@ const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAG
 
 import dotenv from 'dotenv';
 import { cmdEvent, msgEvent } from './shared/interfaces'
-import { GetFilesRec } from './shared/files'
+import { GetFilesRec, FilterByExt } from './shared/files'
 
 dotenv.config()
 
@@ -15,8 +15,7 @@ const slashCommands: Collection<ApplicationCommandData, (event: cmdEvent) => any
 
 
 function SetupMessageHandlers() {
-    let allFiles = GetFilesRec('./dist/commands/message')
-    let files = allFiles.filter(f => f.split('.').pop() === ('js')); // ignore .js.map files
+    let files = FilterByExt(GetFilesRec('./dist/commands/message'), '.js') // get all .js files
 
     if (files.length <= 0) {
         console.log('No message handlers found!');
@@ -30,8 +29,7 @@ function SetupMessageHandlers() {
 }
 
 function SetupSlashHandlers() {
-    let allFiles = GetFilesRec('./dist/commands/slash')
-    let files = allFiles.filter(f => f.split('.').pop() === ('js')); // ignore .js.map files
+    let files = FilterByExt(GetFilesRec('./dist/commands/slash'), '.js') // get all .js files
 
     if (files.length <= 0) {
         console.log('No slash commands found!');
