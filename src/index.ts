@@ -3,6 +3,7 @@ const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAG
 
 import dotenv from 'dotenv';
 import { cmdEvent, msgEvent } from './shared/interfaces'
+import { GetFilesRec } from './shared/files'
 
 dotenv.config()
 
@@ -12,31 +13,39 @@ const Dev: boolean = process.env.NODE_ENV === "dev"
 const messageReplies: Collection<(msg: Message) => boolean, (event: msgEvent) => any> = new Collection();
 const slashCommands: Collection<ApplicationCommandData, (event: cmdEvent) => any> = new Collection();
 
-import fs from 'fs'
 
-fs.readdir('./dist/commands/message', (err, allFiles) => {
-    if (err) console.log(err);
-
+function SetupMessageHandlers() {
+    let allFiles = GetFilesRec('./dist/commands/message')
     let files = allFiles.filter(f => f.split('.').pop() === ('js')); // ignore .js.map files
 
-    if (files.length <= 0) console.log('No message handlers found!');
-    else for (let file of files) {
-        const props = require(`./commands/message/${file}`) as { match: (msg: Message) => boolean, run: (event: msgEvent) => any };
-        messageReplies.set(props.match, props.run);
+    if (files.length <= 0) {
+        console.log('No message handlers found!');
     }
-});
+    else {
+        for (let file of files) {
+            const props = require(`./commands/${file}`) as { match: (msg: Message) => boolean, run: (event: msgEvent) => any };
+            messageReplies.set(props.match, props.run);
+        }
+    }
+}
 
-fs.readdir('./dist/commands/slash', (err, allFiles) => {
-    if (err) console.log(err);
-
+function SetupSlashHandlers() {
+    let allFiles = GetFilesRec('./dist/commands/slash')
     let files = allFiles.filter(f => f.split('.').pop() === ('js')); // ignore .js.map files
 
-    if (files.length <= 0) console.log('No commands found!');
-    else for (let file of files) {
-        const props = require(`./commands/slash/${file}`) as { data: ApplicationCommandData, run: (event: cmdEvent) => any };
-        slashCommands.set(props.data, props.run);
+    if (files.length <= 0) {
+        console.log('No slash commands found!');
     }
-});
+    else {
+        for (let file of files) {
+            const props = require(`./commands/${file}`) as { data: ApplicationCommandData, run: (event: cmdEvent) => any };
+            slashCommands.set(props.data, props.run);
+        }
+    }
+}
+
+SetupMessageHandlers();
+SetupSlashHandlers();
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user ? client.user.tag : "null"}!`);
@@ -70,7 +79,7 @@ client.on('interactionCreate', async interaction => { // stolen from https://dep
 
     const commandModule = slashCommands.find((_run, data) => interaction.commandName === data.name);
     if (commandModule) commandModule({ interaction, client });
-    
+
 });
 
 async function registerSlashCommands(msg: Discord.Message) {
@@ -103,7 +112,7 @@ async function registerSlashCommands(msg: Discord.Message) {
         const commands = await guild.commands.set(data);
         console.log(commands);
     }
-    
+
     msg.reply("Added commands");
 }
 
