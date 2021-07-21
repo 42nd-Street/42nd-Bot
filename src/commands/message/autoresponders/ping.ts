@@ -1,5 +1,5 @@
-import { Message } from 'discord.js'
-import { msgEvent } from '../../shared/interfaces';
+import { Message } from 'discord.js';
+import { msgEvent } from '../../../shared/interfaces';
 
 export function run(e: msgEvent) {
 	e.msg.reply(`Pong!`);
