@@ -34,7 +34,6 @@ function SetupSlashHandlers() {
     if (files.length <= 0) {
         console.log('No slash commands found!');
     }
-<<<<<<< HEAD
     else {
         for (let file of files) {
             const props = require(`./commands/${file}`) as { data: ApplicationCommandData, run: (event: cmdEvent) => any };
@@ -45,10 +44,6 @@ function SetupSlashHandlers() {
 
 SetupMessageHandlers();
 SetupSlashHandlers();
-=======
-    console.log(slashCommands)
-});
->>>>>>> cb4c5f7 ((WIP) add /play and /skip)
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user ? client.user.tag : "null"}!`);

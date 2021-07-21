@@ -7,7 +7,7 @@ import { Track } from "../../shared/voice/track";
 
 export const data: ApplicationCommandData = {
     name: 'play',
-    description: 'Plays a song or a sound file',
+    description: 'Plays a song from url or from an attachment. If you want to send an attachemnt, just run the command and sent the file to the channel within 10 seconds.',
     options: [{
         name: 'url',
         description: 'The (yt) url of the song to play',
@@ -30,7 +30,7 @@ export async function run(e: cmdEvent) {
             e.interaction.followUp({ content: 'Now playing!' }).catch(console.warn);
         },
         onFinish() {
-            //e.interaction.followUp({ content: 'Now finished!' }).catch(console.warn);
+            e.interaction.followUp({ content: 'Now finished!', ephemeral: true }).catch(console.warn);
         },
         onError(error: Error) {
             console.warn(error);
@@ -72,32 +72,13 @@ export async function run(e: cmdEvent) {
     if (!urlOption) {
 
         // Recieve attachment here
-        await e.interaction.followUp(`You have an unlimited amount of seconds to send an attachment before I add you to the list of the NSF casualties.`);
-        //try {
-        //    e.interaction.channel!.awaitMessages({ max: 5, time: 5000, errors: ['time'] }).then((messages) => {
-        //        messages?.forEach((msg: Message) => {
-        //            if (msg.author === e.interaction.member?.user) {
-        //                const attachment = msg.attachments.first()
-        //                if (attachment instanceof MessageAttachment) {
-        //                    url = attachment.url;
-        //                    tracktype = 'DISCORD_ATTACHMENT'
-        //                    e.interaction.reply('Good.');
-        //                }
-        //                else {
-        //                    e.interaction.followUp("Not an attachment. You want soy food?")
-        //                }
-        //            }
-        //        })
-        //    }, (reason) => {
-        //        e.interaction.followUp(reason.toString())
-        //    })
-        //}
-        //catch (err) {
-        //    e.interaction.followUp(err.message || 'no message found')
-        //}
         const listener = async (msg: Message) => {
             if (msg.author === e.interaction.member?.user) {
                 const attachment = msg.attachments.first()
+                if (Date.now() - startTime >= 10000) {
+                    e.client.removeListener('messageCreate', listener);
+                    return;
+                }
                 if (attachment instanceof MessageAttachment) {
                     try {
                         const track = await Track.from(attachment.url, 'DISCORD_ATTACHMENT', eventMethods, attachment.name!)
@@ -115,6 +96,7 @@ export async function run(e: cmdEvent) {
                 e.client.removeListener('messageCreate', listener);
             }
         }
+        const startTime = Date.now();
         e.client.on('messageCreate', listener);
     }
     else {
@@ -127,7 +109,6 @@ export async function run(e: cmdEvent) {
         const isYt = url.match(/(http:|https:)?\/\/(www\.)?(youtube.com|youtu.be)\/(watch)?(\?v=)?(\S+)?/) != null;
 
         if (isYt) {
-            e.interaction.followUp('yt branch')
 
             try {
                 // Attempt to create a Track from the user's video URL
@@ -145,6 +126,7 @@ export async function run(e: cmdEvent) {
             const isUrl = url.match(/(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?/) != null
             if (isUrl) {
                 e.interaction.followUp('direct branch')
+                return;
             }
             else {
                 e.interaction.followUp('bad url')
