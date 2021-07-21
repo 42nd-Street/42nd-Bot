@@ -1,4 +1,4 @@
-import Discord, { ApplicationCommandData, Client, Collection, Intents, Message, Snowflake, SnowflakeUtil } from 'discord.js';
+import Discord, { ApplicationCommandData, Collection, Intents, Message, Snowflake } from 'discord.js';
 const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 
 import dotenv from 'dotenv';
@@ -34,6 +34,7 @@ function SetupSlashHandlers() {
     if (files.length <= 0) {
         console.log('No slash commands found!');
     }
+<<<<<<< HEAD
     else {
         for (let file of files) {
             const props = require(`./commands/${file}`) as { data: ApplicationCommandData, run: (event: cmdEvent) => any };
@@ -44,6 +45,10 @@ function SetupSlashHandlers() {
 
 SetupMessageHandlers();
 SetupSlashHandlers();
+=======
+    console.log(slashCommands)
+});
+>>>>>>> cb4c5f7 ((WIP) add /play and /skip)
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user ? client.user.tag : "null"}!`);
