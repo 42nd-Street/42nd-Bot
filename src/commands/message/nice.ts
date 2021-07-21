@@ -9,7 +9,5 @@ export function run(e: msgEvent) {
 }
 
 export function match(msg: Message) {
-    if (msg.content.toLowerCase() === "nice") return true;
-    
-    return false;
+    return msg.content.toLowerCase() === "nice";
 }
