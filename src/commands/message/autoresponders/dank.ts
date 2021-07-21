@@ -8,5 +8,5 @@ export function run(e: msgEvent) {
 
 export function match(msg: Message) {
     // Adds exception for Ryans id for danke
-    return msg.content.toLowerCase() === "dank" || (msg.content.toLowerCase() === "danke" && msg.author.id == "225723089810358282") ;
+    return msg.content.toLowerCase() === "dank" || (msg.content.toLowerCase() === "danke" && msg.author.id == "225723089810358282");
 }

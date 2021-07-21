@@ -24,6 +24,6 @@ export function GetFilesRec(dir: string): string[] {
     return files;
 }
 
-export function FilterByExt(files: string[], ext: string): string[]{
+export function FilterByExt(files: string[], ext: string): string[] {
     return files.filter(f => path.extname(f) === ext);
 }
