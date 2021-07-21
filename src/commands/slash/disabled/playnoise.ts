@@ -6,7 +6,7 @@ import { getStream } from '../../../shared/interactions/recieveAttachment'
 import https from 'https'
 
 export const data: ApplicationCommandData = {
-    name: "play",
+    name: "oldplay",
     description: "plays noise",
     options: [{
         name: 'url',
