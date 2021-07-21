@@ -7,7 +7,6 @@ let cursed_images=["https://cdn.discordapp.com/attachments/470387639649042432/61
 
 export function run(e: msgEvent) {
     e.msg.channel.send(AutoreplyEmbedGen("c̵u̸r̷s̶e̵d̶ ̸b̵i̶r̷b̷ ", get_random(cursed_images), e.msg))
-    e.msg.delete();
 }
 
 export function match(msg: Message) {

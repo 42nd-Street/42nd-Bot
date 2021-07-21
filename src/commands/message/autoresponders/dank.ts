@@ -4,7 +4,6 @@ import { AutoreplyEmbedGen } from '../../../shared/embed';
 
 export function run(e: msgEvent) {
     e.msg.channel.send(AutoreplyEmbedGen("dank", "https://cdn.discordapp.com/attachments/405042469000970255/587229706835853312/220px-Adobe_XD_CC_icon.svg_-_Copy.png", e.msg))
-    e.msg.delete();
 }
 
 export function match(msg: Message) {
