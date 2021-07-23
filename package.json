@@ -13,7 +13,7 @@
   "dependencies": {
     "@discordjs/opus": "^0.5.3",
     "@discordjs/voice": "^0.5.4",
-    "discord.js": "^13.0.0-dev.4206e35.1626350625",
+    "discord.js": "^13.0.0-dev.c8ca7bf.1627041776",
     "dotenv": "^10.0.0",
     "libsodium-wrappers": "^0.7.9",
     "opusscript": "0.0.8",
