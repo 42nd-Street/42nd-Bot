@@ -12,13 +12,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/opus": "^0.5.3",
     "@discordjs/voice": "^0.5.4",
     "@zerollup/ts-transform-paths": "^1.7.18",
     "discord.js": "^13.0.0-dev.c8ca7bf.1627041776",
     "dotenv": "^10.0.0",
     "libsodium-wrappers": "^0.7.9",
-    "module-alias": "^2.2.2",
     "opusscript": "0.0.8",
     "ts-patch": "^1.4.1",
     "typescript": "^4.3.4",
@@ -27,7 +25,6 @@
     "ytdl-core-discord": "^1.3.1"
   },
   "devDependencies": {
-    "@types/module-alias": "^2.0.1",
     "@types/node": "^15.12.5"
   }
 }

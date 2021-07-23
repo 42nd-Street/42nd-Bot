@@ -1,4 +1,3 @@
-require('module-alias/register')
 import Discord, { ApplicationCommandData, Collection, Intents, Message, Snowflake } from 'discord.js';
 const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 
@@ -16,7 +15,7 @@ const slashCommands: Collection<ApplicationCommandData, (event: cmdEvent) => any
 
 
 function SetupMessageHandlers() {
-    let files = FilterByExt(GetFilesRec('./dist/commands/message'), '.js') // get all .js files
+    let files = FilterByExt(GetFilesRec('./dist/commands/message'), '.js'); // get all .js files
 
     if (files.length <= 0) {
         console.log('No message handlers found!');
@@ -30,7 +29,7 @@ function SetupMessageHandlers() {
 }
 
 function SetupSlashHandlers() {
-    let files = FilterByExt(GetFilesRec('./dist/commands/slash'), '.js') // get all .js files
+    let files = FilterByExt(GetFilesRec('./dist/commands/slash'), '.js'); // get all .js files
 
     if (files.length <= 0) {
         console.log('No slash commands found!');
@@ -115,7 +114,7 @@ async function registerSlashCommands(msg: Discord.Message) {
         });
 
         const commands = await guild.commands.set(data);
-        console.log(commands)
+        console.log(commands);
     }
 
     msg.reply("Added commands");
