@@ -52,12 +52,10 @@ export async function run(e: cmdEvent) {
             subscription.voiceConnection.on('error', console.warn);
             subscriptions.set(e.interaction.guildId, subscription);
         }
-    }
-    
-    // If there is no subscription, tell the user they need to join a channel.
-    if (!subscription) {
-        await e.interaction.followUp('Join a voice channel and then try that again!');
-        return;
+        else {
+            await e.interaction.followUp('Join a voice channel and then try that again!');
+            return;
+        }
     }
 
     // Make sure the connection is ready before processing the user's request
