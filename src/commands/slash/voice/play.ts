@@ -106,7 +106,7 @@ export async function run(e: cmdEvent) {
         const url = urlOption.value! as string;
 
         // Big regex from https://stackoverflow.com/questions/3717115/regular-expression-for-youtube-links
-        const isYt = url.match(/(http:|https:)?\/\/(www\.)?(youtube.com|youtu.be)\/(watch)?(\?v=)?(\S+)?/) != null;
+        const isYt = url.match(/(http:|https:)?\/\/(www\.)?((m.)?youtube.com|youtu.be)\/(watch)?(\?v=)?(\S+)?/) != null;
 
         if (isYt) {
 
