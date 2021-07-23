@@ -10,8 +10,19 @@
       "skipLibCheck": true,
       "forceConsistentCasingInFileNames": true,
       "outDir": "dist",
-      "sourceMap": true
-    },
+      "sourceMap": true,
+      "baseUrl": "src",
+      "paths": {
+        "@shared/*":["shared/*"],
+        "@voice/*": ["shared/voice/*"],
+        "@interactions/*":["shared/interactions/*"]
+      },
+      "plugins": [
+        {
+            "transform": "@zerollup/ts-transform-paths",
+            "exclude": ["*"]
+        }
+    ]},
 
     "include": [
         "src/**/*"

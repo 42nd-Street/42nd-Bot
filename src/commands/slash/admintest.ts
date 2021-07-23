@@ -1,5 +1,5 @@
-import { cmdEvent } from '../../shared/interfaces'
-import { DevIDs } from '../../index'
+import { cmdEvent } from '@shared/interfaces'
+import { DevIDs } from 'index'
 import { ApplicationCommandData } from 'discord.js';
 
 export const data: ApplicationCommandData = {

@@ -1,9 +1,9 @@
 import { entersState, joinVoiceChannel, VoiceConnectionStatus } from "@discordjs/voice";
 import { ApplicationCommandData, GuildMember, Message, MessageAttachment, VoiceChannel } from "discord.js";
-import { cmdEvent } from "../../shared/interfaces"
-import { createDiscordJSAdapter } from "../../shared/voice/adapter";
-import { MusicSubscription, subscriptions } from "../../shared/voice/subscription"
-import { Track } from "../../shared/voice/track";
+import { cmdEvent } from "@shared/interfaces"
+import { createDiscordJSAdapter } from "@voice/adapter";
+import { MusicSubscription, subscriptions } from "@voice/subscription"
+import { Track } from "@voice/track";
 
 export const data: ApplicationCommandData = {
     name: 'play',

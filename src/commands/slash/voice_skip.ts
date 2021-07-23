@@ -1,6 +1,6 @@
 import { ApplicationCommandData } from "discord.js";
-import { cmdEvent } from "../../shared/interfaces";
-import { subscriptions } from "../../shared/voice/subscription";
+import { cmdEvent } from "@shared/interfaces";
+import { subscriptions } from "@voice/subscription";
 
 export const data: ApplicationCommandData = {
     name: 'skip',
