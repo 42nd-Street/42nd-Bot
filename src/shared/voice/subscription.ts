@@ -112,7 +112,7 @@ export class MusicSubscription {
 	 */
 	public enqueue(track: Track) {
 		this.queue.push(track);
-		void this.processQueue();
+		this.processQueue();
 	}
 
 	/**
