@@ -2,7 +2,7 @@ import Discord, { ApplicationCommandData, Collection, Intents, Message, Snowflak
 const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 
 import dotenv from 'dotenv';
-import { cmdEvent, msgEvent } from '@shared/interfaces'
+import { cmdEvent, msgEvent } from '@interactions/interfaces'
 import { GetFilesRec, FilterByExt } from '@shared/files'
 
 dotenv.config()

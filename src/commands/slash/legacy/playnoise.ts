@@ -1,9 +1,8 @@
 import { createAudioPlayer } from "@discordjs/voice";
 import { ApplicationCommandData, GuildMember, Message, MessageAttachment, VoiceChannel } from "discord.js";
-import { cmdEvent } from "../../../shared/interfaces";
+import { cmdEvent } from "../../../shared/interactions/interfaces";
 import { connectToChannel, playSong } from "@voice/utils";
-import { getStream } from '@interactions/recieveAttachment'
-import https from 'https'
+import { getStream } from '@voice/utils'
 
 export const data: ApplicationCommandData = {
     name: "oldplay",

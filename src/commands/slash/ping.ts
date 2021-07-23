@@ -1,5 +1,5 @@
 import { ApplicationCommandData } from "discord.js";
-import { cmdEvent } from "@shared/interfaces";
+import { cmdEvent } from "@interactions/interfaces";
 
 export const data: ApplicationCommandData = {
     name: "ping",

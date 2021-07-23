@@ -1,4 +1,4 @@
-import { cmdEvent } from '@shared/interfaces'
+import { cmdEvent } from '@interactions/interfaces'
 import { DevIDs } from 'index'
 import { ApplicationCommandData } from 'discord.js';
 

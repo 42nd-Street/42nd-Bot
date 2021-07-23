@@ -1,6 +1,6 @@
 import ytdl from 'ytdl-core-discord';
-import { AudioResource, createAudioPlayer, createAudioResource, StreamType } from '@discordjs/voice';
-import { getStream } from '../interactions/recieveAttachment';
+import { AudioResource, createAudioResource, StreamType } from '@discordjs/voice';
+import { getStream } from '@voice/utils';
 
 /**
  * This is the data required to create a Track object

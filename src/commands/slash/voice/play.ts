@@ -1,9 +1,10 @@
 import { entersState, joinVoiceChannel, VoiceConnectionStatus } from "@discordjs/voice";
 import { ApplicationCommandData, GuildMember, Message, MessageAttachment, VoiceChannel } from "discord.js";
-import { cmdEvent } from "@shared/interfaces"
+import { cmdEvent } from "@interactions/interfaces"
 import { createDiscordJSAdapter } from "@voice/adapter";
 import { MusicSubscription, subscriptions } from "@voice/subscription"
 import { Track } from "@voice/track";
+import { userInCorrectChannel } from "@shared/interactions/utils";
 
 export const data: ApplicationCommandData = {
     name: 'play',
@@ -57,6 +58,9 @@ export async function run(e: cmdEvent) {
             return;
         }
     }
+
+    // Check if the user's channel corresponds to the existing subscription
+    if (!userInCorrectChannel) return;
 
     // Make sure the connection is ready before processing the user's request
     try {
