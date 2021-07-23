@@ -7,7 +7,7 @@ import { Track } from "@voice/track";
 
 export const data: ApplicationCommandData = {
     name: 'play',
-    description: 'Plays a song from url or from an attachment. If you want to send an attachemnt, just run the command and sent the file to the channel within 10 seconds.',
+    description: 'Plays a song from url or from an attachment. To send an attachment, reply within 10s.',
     options: [{
         name: 'url',
         description: 'The (yt) url of the song to play',
