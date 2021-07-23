@@ -7,7 +7,7 @@ import { cmdEvent, msgEvent } from './shared/interfaces'
 dotenv.config()
 
 export const DevIDs: string[] = process.env.DISCORD_ADMIN_IDS?.split(", ")!;
-const Dev: boolean = process.env.NODE_ENV === "dev"
+const Dev: boolean = process.env.NODE_ENV === "development"
 
 const messageReplies: Collection<(msg: Message) => boolean, (event: msgEvent) => any> = new Collection();
 const slashCommands: Collection<ApplicationCommandData, (event: cmdEvent) => any> = new Collection();
