@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
-import { msgEvent } from '../../shared/interfaces';
-import { AutoreplyEmbedGen } from '../../shared/embed';
+import { msgEvent } from '../../../shared/interfaces';
+import { AutoreplyEmbedGen } from '../../../shared/embed';
 
 export function run(e: msgEvent) {
     // Note: As of writing (1/7/21) info on the new embed sytem is not properly documented
@@ -9,7 +9,5 @@ export function run(e: msgEvent) {
 }
 
 export function match(msg: Message) {
-    if (msg.content.toLowerCase() === "nice") return true;
-    
-    return false;
+    return msg.content.toLowerCase() === "nice";
 }
