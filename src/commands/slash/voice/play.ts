@@ -60,7 +60,7 @@ export async function run(e: cmdEvent) {
     }
 
     // Check if the user's channel corresponds to the existing subscription
-    if (!userInCorrectChannel) return;
+    if (!userInCorrectChannel(e, subscription)) return;
 
     // Make sure the connection is ready before processing the user's request
     try {
