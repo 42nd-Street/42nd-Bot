@@ -93,7 +93,7 @@ export class MusicSubscription {
 				// If the Idle state is entered from a non-Idle state, it means that an audio resource has finished playing.
 				// The queue is then processed to start playing the next track, if one is available.
 				(oldState.resource as AudioResource<Track>).metadata.onFinish();
-				void this.processQueue();
+				this.processQueue();
 			} else if (newState.status === AudioPlayerStatus.Playing) {
 				// If the Playing state has been entered, then a new track has started playback.
 				(newState.resource as AudioResource<Track>).metadata.onStart();
