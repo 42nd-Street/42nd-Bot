@@ -12,9 +12,9 @@ export interface TrackData {
 	url: string;
 	title: string;
 	type: TrackType;
-	onStart: () => void;
-	onFinish: () => void;
-	onError: (error: Error) => void;
+	onStart: (title: string) => void;
+	onFinish: (title: string) => void;
+	onError: (title: string, error: Error) => void;
 }
 
 const noop = () => { };
@@ -32,9 +32,9 @@ export class Track implements TrackData {
 	public readonly url: string;
 	public readonly title: string;
 	public readonly type: TrackType
-	public readonly onStart: () => void;
-	public readonly onFinish: () => void;
-	public readonly onError: (error: Error) => void;
+	public readonly onStart: (title: string) => void;
+	public readonly onFinish: (title: string) => void;
+	public readonly onError: (title: string, error: Error) => void;
 
 	private constructor({ url, title, type, onStart, onFinish, onError }: TrackData) {
 		this.url = url;
@@ -58,7 +58,7 @@ export class Track implements TrackData {
 					audio = createAudioResource(await ytdl(this.url, {}), { metadata: this })
 					break;
 				case 'DISCORD_ATTACHMENT':
-					audio = createAudioResource(await getStream(this.url), {inputType: StreamType.Arbitrary, metadata: this})
+					audio = createAudioResource(await getStream(this.url), { inputType: StreamType.Arbitrary, metadata: this })
 					break;
 				default:
 					throw new Error(`The type ${this.type} is not yet supported.`)
@@ -85,21 +85,7 @@ export class Track implements TrackData {
 	 * @returns The created Track
 	 */
 	public static async from(url: string, type: TrackType, methods: Pick<Track, 'onStart' | 'onFinish' | 'onError'>, name?: string): Promise<Track> {
-		// The methods are wrapped so that we can ensure that they are only called once.
-		const wrappedMethods = {
-			onStart() {
-				wrappedMethods.onStart = noop;
-				methods.onStart();
-			},
-			onFinish() {
-				wrappedMethods.onFinish = noop;
-				methods.onFinish();
-			},
-			onError(error: Error) {
-				wrappedMethods.onError = noop;
-				methods.onError(error);
-			},
-		};
+
 		let title: string;
 		switch (type) {
 			case 'YOUTUBE':
@@ -118,6 +104,22 @@ export class Track implements TrackData {
 				throw new Error(`Type ${type} is not implemented`)
 				break;
 		}
+
+		// The methods are wrapped so that we can ensure that they are only called once.
+		const wrappedMethods = {
+			onStart(title: string) {
+				wrappedMethods.onStart = noop;
+				methods.onStart(title);
+			},
+			onFinish(title: string) {
+				wrappedMethods.onFinish = noop;
+				methods.onFinish(title);
+			},
+			onError(title: string, error: Error) {
+				wrappedMethods.onError = noop;
+				methods.onError(title, error);
+			},
+		};
 
 		return new Track({
 			title,

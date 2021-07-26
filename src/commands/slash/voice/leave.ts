@@ -2,6 +2,7 @@ import { ApplicationCommandData } from "discord.js";
 import { cmdEvent } from '@interactions/interfaces'
 import { subscriptions } from "@shared/voice/subscription";
 import { userInCorrectChannel } from "@interactions/utils";
+import { notInVc } from "@interactions/responses";
 
 export const data: ApplicationCommandData = {
     name: "leave",
@@ -14,7 +15,7 @@ export async function run(e: cmdEvent) {
     const subscription = subscriptions.get(e.interaction.guildId)
 
     if (!subscription) {
-        await e.interaction.reply('Not in a voice channel!');
+        await notInVc(e);
         return;
     }
 

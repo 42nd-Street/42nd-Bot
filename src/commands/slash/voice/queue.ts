@@ -5,6 +5,7 @@ import { subscriptions } from "@shared/voice/subscription";
 import { AudioPlayerStatus, AudioResource } from "@discordjs/voice";
 import { Track } from "@shared/voice/track";
 import { userInCorrectChannel } from "@interactions/utils";
+import { notInVc } from "@shared/interactions/responses";
 
 export const data: ApplicationCommandData = {
     name: "queue",
@@ -17,7 +18,7 @@ export async function run(e: cmdEvent) {
     const subscription = subscriptions.get(e.interaction.guildId);
 
     if (!subscription) {
-        await e.interaction.reply('Not in a voice channel!');
+        await notInVc(e);
         return;
     }
 
@@ -29,6 +30,7 @@ export async function run(e: cmdEvent) {
             : `Playing **${(subscription.audioPlayer.state.resource as AudioResource<Track>).metadata.title}**`;
 
     const queue = subscription.queue
+        .slice(0,10)
         .map((track, index) => `${index + 1}) ${track.title}`)
         .join('\n');
 
