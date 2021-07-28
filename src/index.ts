@@ -1,4 +1,4 @@
-import Discord, { ApplicationCommandData, Collection, Intents, Message, Snowflake } from 'discord.js';
+import Discord, { ApplicationCommandData, Collection, DiscordAPIError, Intents, Message, Snowflake } from 'discord.js';
 const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 
 import dotenv from 'dotenv';
@@ -109,9 +109,21 @@ async function registerSlashCommands(msg: Discord.Message) {
         const guild = await client.guilds.fetch(guildID);
 
         // clear commands just in case
-        await guild.commands.fetch().then((commands) => {
-            commands.forEach(command => command.delete());
-        });
+        try {
+            const commands = await guild.commands.fetch()
+            for (const command of commands.values()) {
+                command.delete();
+            }
+        }
+        catch (err) {
+            if (err instanceof DiscordAPIError) {
+                console.warn(err.message);
+            }
+            else {
+                throw err;
+            }
+        }
+
 
         const commands = await guild.commands.set(data);
         console.log(commands);
