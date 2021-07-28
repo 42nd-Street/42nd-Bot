@@ -104,7 +104,7 @@ async function registerSlashCommands(msg: Discord.Message) {
 
         // set a custom test server or our default (leaving this here for convienience)
         // why are snowflakes so hard to parse
-        const guildID: Snowflake = `${BigInt(process.env.DISCORD_TEST_GUILDID || '859489322587521054')}`;
+        const guildID: Snowflake = msg.guild?.id || `${BigInt(process.env.DISCORD_TEST_GUILDID || '859489322587521054')}`;
         // Set commands as test server-only
         const guild = await client.guilds.fetch(guildID);
 
