@@ -121,7 +121,7 @@ export class MusicSubscription {
 	 * Stops audio playback and empties the queue
 	 */
 	public stop() {
-		this.enqueueLock = this.enqueueLock = true
+		this.queueLock = this.enqueueLock = true
 		this.queue = [];
 		this.audioPlayer.stop(true);
 		this.queueLock = false;
