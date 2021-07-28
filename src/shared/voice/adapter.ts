@@ -1,6 +1,6 @@
-import { DiscordGatewayAdapterCreator, DiscordGatewayAdapterLibraryMethods } from '@discordjs/voice'
+import { DiscordGatewayAdapterCreator, DiscordGatewayAdapterLibraryMethods } from '@discordjs/voice';
 import { VoiceChannel, Snowflake, Client, Constants, WebSocketShard, Guild } from 'discord.js';
-import { GatewayVoiceServerUpdateDispatchData, GatewayVoiceStateUpdateDispatchData } from 'discord-api-types/v8';
+import { GatewayVoiceServerUpdateDispatchData, GatewayVoiceStateUpdateDispatchData } from 'discord-api-types/v9';
 
 const adapters = new Map<Snowflake, DiscordGatewayAdapterLibraryMethods>();
 const trackedClients = new Set<Client>();
@@ -20,27 +20,24 @@ function trackClient(client: Client) {
 			adapters.get(payload.guild_id)?.onVoiceStateUpdate(payload);
 		}
 	});
-}
-
-const trackedGuilds = new Map<WebSocketShard, Set<Snowflake>>();
-
-function cleanupGuilds(shard: WebSocketShard) {
-	const guilds = trackedGuilds.get(shard);
-	if (guilds) {
-		for (const guildID of guilds.values()) {
-			adapters.get(guildID)?.destroy();
+	client.on(Constants.Events.SHARD_DISCONNECT, (_, shardID) => {
+		const guilds = trackedShards.get(shardID);
+		if (guilds) {
+			for (const guildID of guilds.values()) {
+				adapters.get(guildID)?.destroy();
+			}
 		}
-	}
+		trackedShards.delete(shardID);
+	});
 }
+
+const trackedShards = new Map<number, Set<Snowflake>>();
 
 function trackGuild(guild: Guild) {
-	let guilds = trackedGuilds.get(guild.shard);
+	let guilds = trackedShards.get(guild.shardId);
 	if (!guilds) {
-		const cleanup = () => cleanupGuilds(guild.shard);
-		guild.shard.on('close', cleanup);
-		guild.shard.on('destroyed', cleanup);
 		guilds = new Set();
-		trackedGuilds.set(guild.shard, guilds);
+		trackedShards.set(guild.shardId, guilds);
 	}
 	guilds.add(guild.id);
 }
