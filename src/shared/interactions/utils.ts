@@ -9,8 +9,7 @@ import { cmdEvent } from "@interactions/interfaces";
  * @param subscription the music subscription of the guild
  * @returns True if user is in correct channel, false otherwise
  */
-export function userInCorrectChannel(e: cmdEvent, subscription: MusicSubscription) : Boolean {
-    return !(subscription.voiceConnection.state.status === VoiceConnectionStatus.Ready
-        && subscription.voiceConnection.joinConfig.channelId !== (e.interaction.member as GuildMember).voice.channelId)
+export function userInCorrectChannel(e: cmdEvent, subscription: MusicSubscription): Boolean {
+    return subscription.voiceConnection.joinConfig.channelId === (e.interaction.member as GuildMember).voice.channelId
 }
 

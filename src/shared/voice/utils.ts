@@ -138,7 +138,7 @@ export async function getSubscription(e: cmdEvent): Promise<MusicSubscription> {
 	try {
 		await entersState(subscription.voiceConnection, VoiceConnectionStatus.Ready, 15e3);
 		// Unlock the queue so new requests go through
-		subscription.queueLock = false;
+		subscription.enqueueLock = false;
 		return subscription;
 	} catch (error) {
 		console.warn(error);

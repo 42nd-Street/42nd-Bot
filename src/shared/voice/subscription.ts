@@ -27,6 +27,7 @@ export class MusicSubscription {
 	public queue: Track[];
 	public queueLock = false;
 	public readyLock = false;
+	public enqueueLock = false;
 
 	public constructor(voiceConnection: VoiceConnection) {
 		this.voiceConnection = voiceConnection;
@@ -111,6 +112,7 @@ export class MusicSubscription {
 	 * @param track The track to add to the queue
 	 */
 	public enqueue(track: Track) {
+		if (this.enqueueLock) { return; }
 		this.queue.push(track);
 		this.processQueue();
 	}
@@ -119,9 +121,10 @@ export class MusicSubscription {
 	 * Stops audio playback and empties the queue
 	 */
 	public stop() {
-		this.queueLock = true;
+		this.enqueueLock = this.enqueueLock = true
 		this.queue = [];
 		this.audioPlayer.stop(true);
+		this.queueLock = false;
 	}
 
 	/**

@@ -51,7 +51,6 @@ export async function run(e: cmdEvent) {
     // Regex: https://regexr.com/62j9j
     const isYtVid = urlInput.match(/((http(s)?:)(\/\/))?(www\.)?((m.)?youtube.com|youtu.be)\/(watch)?(\?v=)?(\S+)?/) != null;
 
-    // This is defined only for YT videos
     const urls: string[] = []
     let isPlaylist: boolean = false;
 
@@ -76,6 +75,8 @@ export async function run(e: cmdEvent) {
 
         for (const url of urls) {
             try {
+                // Do not attempt to queue more tracks if queue just got cleared.
+                if (subscription.enqueueLock) { return; }   
                 // Attempt to create a Track from the user's video URL
                 const track = await Track.from(url, 'YOUTUBE', eventMethods);
                 // Enqueue the track and reply a success message to the user
