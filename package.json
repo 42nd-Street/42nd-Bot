@@ -14,7 +14,7 @@
   "dependencies": {
     "@discordjs/voice": "^0.5.4",
     "@zerollup/ts-transform-paths": "^1.7.18",
-    "discord.js": "^13.0.0-dev.c8ca7bf.1627041776",
+    "discord.js": "dev",
     "dotenv": "^10.0.0",
     "libsodium-wrappers": "^0.7.9",
     "opusscript": "0.0.8",
