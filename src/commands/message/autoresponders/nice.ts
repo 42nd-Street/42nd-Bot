@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
-import { msgEvent } from '../../../shared/interfaces';
-import { AutoreplyEmbedGen } from '../../../shared/embed';
+import { msgEvent } from '@interactions/interfaces';
+import { AutoreplyEmbedGen } from '@shared/embed';
 
 export function run(e: msgEvent) {
     // Note: As of writing (1/7/21) info on the new embed sytem is not properly documented

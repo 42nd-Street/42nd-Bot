@@ -1,9 +1,9 @@
-import Discord, { ApplicationCommandData, Client, Collection, Intents, Message, Snowflake, SnowflakeUtil } from 'discord.js';
-const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES] });
+import Discord, { ApplicationCommandData, Collection, DiscordAPIError, Intents, Message, Snowflake } from 'discord.js';
+const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 
 import dotenv from 'dotenv';
-import { cmdEvent, msgEvent } from './shared/interfaces'
-import { GetFilesRec, FilterByExt } from './shared/files'
+import { cmdEvent, msgEvent } from '@interactions/interfaces'
+import { GetFilesRec, FilterByExt } from '@shared/files'
 
 dotenv.config()
 
@@ -15,7 +15,7 @@ const slashCommands: Collection<ApplicationCommandData, (event: cmdEvent) => any
 
 
 function SetupMessageHandlers() {
-    let files = FilterByExt(GetFilesRec('./dist/commands/message'), '.js') // get all .js files
+    let files = FilterByExt(GetFilesRec('./dist/commands/message'), '.js'); // get all .js files
 
     if (files.length <= 0) {
         console.log('No message handlers found!');
@@ -29,7 +29,7 @@ function SetupMessageHandlers() {
 }
 
 function SetupSlashHandlers() {
-    let files = FilterByExt(GetFilesRec('./dist/commands/slash'), '.js') // get all .js files
+    let files = FilterByExt(GetFilesRec('./dist/commands/slash'), '.js'); // get all .js files
 
     if (files.length <= 0) {
         console.log('No slash commands found!');
@@ -66,8 +66,20 @@ client.on('messageCreate', async msg => {
 
     // Command handler
     const commandModule = messageReplies.find((_run, match) => match(msg));
-    if (commandModule) commandModule({ msg, client });
-
+    if (commandModule) {
+        try {
+            commandModule({ msg, client });
+        } catch (err) {
+            let willThrow = true;
+            if (err instanceof DiscordAPIError) {
+                if (err.message === 'Missing Permissions') {
+                    console.warn(`${err.message}: in ${msg.guild?.name}:${msg.channel.id} when executing ${commandModule.name} for message: ${msg.content}`);
+                    willThrow = false;
+                }
+            }
+            if (willThrow) { throw err }
+        }
+    }
 });
 
 client.on('interactionCreate', async interaction => { // stolen from https://deploy-preview-638--discordjs-guide.netlify.app/interactions/replying-to-slash-commands.html
@@ -104,9 +116,27 @@ async function registerSlashCommands(msg: Discord.Message) {
 
         // set a custom test server or our default (leaving this here for convienience)
         // why are snowflakes so hard to parse
-        const guildID: Snowflake = `${BigInt(process.env.DISCORD_TEST_GUILDID || '859489322587521054')}`;
+        const guildID: Snowflake = msg.guild?.id || `${BigInt(process.env.DISCORD_TEST_GUILDID || '859489322587521054')}`;
         // Set commands as test server-only
         const guild = await client.guilds.fetch(guildID);
+
+        // clear commands just in case
+        try {
+            const commands = await guild.commands.fetch()
+            for (const command of commands.values()) {
+                command.delete();
+            }
+        }
+        catch (err) {
+            if (err instanceof DiscordAPIError) {
+                console.warn(err.message);
+            }
+            else {
+                throw err;
+            }
+        }
+
+
         const commands = await guild.commands.set(data);
         console.log(commands);
     }
