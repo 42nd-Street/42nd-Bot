@@ -1,53 +1,10 @@
 import { VoiceChannel, GuildMember } from 'discord.js';
 import {
 	joinVoiceChannel,
-	createAudioResource,
 	entersState,
-	StreamType,
-	AudioPlayerStatus,
 	VoiceConnectionStatus,
-	AudioPlayer,
 } from '@discordjs/voice';
 import { createDiscordJSAdapter } from './adapter';
-import { Readable } from 'stream';
-
-/*
-	In this example, we are creating a single audio player that plays to a number of
-	voice channels.
-	The audio player will play a single track.
-*/
-
-/*
-	Create the audio player. We will use this for all of our connections.
-*/
-// const player = createAudioPlayer();
-
-export function playSong(player: AudioPlayer, input: string | Readable) {
-	/*
-		Here we are creating an audio resource using a sample song freely available online
-		(see https://www.soundhelix.com/audio-examples)
-		We specify an arbitrary inputType. This means that we aren't too sure what the format of
-		the input is, and that we'd like to have this converted into a format we can use. If we
-		were using an Ogg or WebM source, then we could change this value. However, for now we
-		will leave this as arbitrary.
-	*/
-	const resource = createAudioResource(input, {
-		inputType: StreamType.Arbitrary,
-	});
-
-	/*
-		We will now play this to the audio player. By default, the audio player will not play until
-		at least one voice connection is subscribed to it, so it is fine to attach our resource to the
-		audio player this early.
-	*/
-	player.play(resource);
-
-	/*
-		Here we are using a helper function. It will resolve if the player enters the Playing
-		state within 5 seconds, otherwise it will reject with an error.
-	*/
-	return entersState(player, AudioPlayerStatus.Playing, 5e3);
-}
 
 export async function connectToChannel(channel: VoiceChannel) {
 	/*
