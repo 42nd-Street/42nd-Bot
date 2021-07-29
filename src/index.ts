@@ -66,8 +66,20 @@ client.on('messageCreate', async msg => {
 
     // Command handler
     const commandModule = messageReplies.find((_run, match) => match(msg));
-    if (commandModule) commandModule({ msg, client });
-
+    if (commandModule) {
+        try {
+            commandModule({ msg, client });
+        } catch (err) {
+            let willThrow = true;
+            if (err instanceof DiscordAPIError) {
+                if (err.message === 'Missing Permissions') {
+                    console.warn(`${err.message}: in ${msg.guild?.name}:${msg.channel.id} when executing ${commandModule.name} for message: ${msg.content}`);
+                    willThrow = false;
+                }
+            }
+            if (willThrow) { throw err }
+        }
+    }
 });
 
 client.on('interactionCreate', async interaction => { // stolen from https://deploy-preview-638--discordjs-guide.netlify.app/interactions/replying-to-slash-commands.html
