@@ -29,10 +29,13 @@ export async function run(e: cmdEvent) {
             ? `Nothing is currently playing!`
             : `Playing **${(subscription.audioPlayer.state.resource as AudioResource<Track>).metadata.title}**`;
 
-    const queue = subscription.queue
-        .slice(0,10)
-        .map((track, index) => `${index + 1}) ${track.title}`)
+    const queue = subscription.MusicQueue.queue
+        .slice(0, 10)
+        .map((track, index) => {
+            let currentTrack = index == subscription.MusicQueue.queueIndex
+            return `${currentTrack ? '   ' : ''} ${index + 1}. ${currentTrack ? '**' : ''}${track.title}${currentTrack ? '**' : ''}`
+        })
         .join('\n');
 
-    await e.interaction.reply(`${current}\n\n${queue}`);
+    await e.interaction.reply(`\`\`\`md\n ${current}\n\n${queue}\`\`\``);
 }
