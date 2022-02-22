@@ -44,7 +44,7 @@ export async function run(e: cmdEvent) {
         if (msg.author === e.interaction.member?.user) {
             const attachment = msg.attachments.first()
             if (Date.now() - startTime >= recieveTimeout) {
-                e.client.removeListener('messageCreate', listener);
+                e.client.off('messageCreate', listener);
                 return;
             }
             if (attachment instanceof MessageAttachment) {
@@ -61,7 +61,7 @@ export async function run(e: cmdEvent) {
             else {
                 e.interaction.followUp("bruh where's the file huh");
             }
-            e.client.removeListener('messageCreate', listener);
+            e.client.off('messageCreate', listener);
         }
     }
     const startTime = Date.now();

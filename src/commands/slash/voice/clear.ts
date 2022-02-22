@@ -23,6 +23,6 @@ export async function run(e: cmdEvent) {
         return; 
     }
 
-    subscription.stop();
+    subscription.clear();
     await e.interaction.reply(`Cleared the queue!`);
 }

@@ -1,9 +1,18 @@
-import Discord, { ApplicationCommandData, Collection, DiscordAPIError, Intents, Message, Snowflake } from 'discord.js';
-const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
+import Discord, { ApplicationCommandData, Collection, DiscordAPIError, Message, Snowflake, Intents } from 'discord.js';
+const client = new Discord.Client(
+    {
+        intents: new Intents([
+            Intents.FLAGS.GUILDS,
+            Intents.FLAGS.GUILD_MESSAGES,
+            Intents.FLAGS.DIRECT_MESSAGES,
+            Intents.FLAGS.GUILD_VOICE_STATES])
+    });
 
 import dotenv from 'dotenv';
 import { cmdEvent, msgEvent } from '@interactions/interfaces'
 import { GetFilesRec, FilterByExt } from '@shared/files'
+
+require('console-stamp')(console);
 
 dotenv.config()
 
@@ -40,6 +49,9 @@ function SetupSlashHandlers() {
             slashCommands.set(props.data, props.run);
         }
     }
+
+    console.log(files)
+    console.log(slashCommands)
 }
 
 SetupMessageHandlers();
@@ -72,10 +84,8 @@ client.on('messageCreate', async msg => {
         } catch (err) {
             let willThrow = true;
             if (err instanceof DiscordAPIError) {
-                if (err.message === 'Missing Permissions') {
-                    console.warn(`${err.message}: in ${msg.guild?.name}:${msg.channel.id} when executing ${commandModule.name} for message: ${msg.content}`);
-                    willThrow = false;
-                }
+                console.warn(`${err.message}: in ${msg.guild?.name}:${msg.channel.id} when executing ${commandModule.name} for message: ${msg.content}`);
+                willThrow = false;
             }
             if (willThrow) { throw err }
         }
@@ -115,7 +125,6 @@ async function registerSlashCommands(msg: Discord.Message) {
     else {
 
         // set a custom test server or our default (leaving this here for convienience)
-        // why are snowflakes so hard to parse
         const guildID: Snowflake = msg.guild?.id || `${BigInt(process.env.DISCORD_TEST_GUILDID || '859489322587521054')}`;
         // Set commands as test server-only
         const guild = await client.guilds.fetch(guildID);
@@ -141,6 +150,7 @@ async function registerSlashCommands(msg: Discord.Message) {
         console.log(commands);
     }
 
+    console.log(`Set commands in${Dev ? '\x1b[36m dev' : '\x1b[33m prod'}\x1b[0m mode`)
     msg.reply("Added commands");
 }
 

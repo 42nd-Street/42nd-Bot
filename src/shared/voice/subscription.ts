@@ -9,6 +9,7 @@ import {
 	VoiceConnectionStatus,
 } from '@discordjs/voice';
 import { Snowflake } from 'discord.js';
+import { MusicQueue } from './queue';
 import { Track } from './track';
 
 function wait(time: number) {
@@ -24,7 +25,7 @@ export const subscriptions = new Map<Snowflake, MusicSubscription>();
 export class MusicSubscription {
 	public readonly voiceConnection: VoiceConnection;
 	public readonly audioPlayer: AudioPlayer;
-	public queue: Track[];
+	public MusicQueue: MusicQueue;
 	public queueLock = false;
 	public readyLock = false;
 	public enqueueLock = false;
@@ -32,7 +33,7 @@ export class MusicSubscription {
 	public constructor(voiceConnection: VoiceConnection) {
 		this.voiceConnection = voiceConnection;
 		this.audioPlayer = createAudioPlayer();
-		this.queue = [];
+		this.MusicQueue = new MusicQueue();
 
 		this.voiceConnection.on('stateChange', async (_, newState) => {
 			if (newState.status === VoiceConnectionStatus.Disconnected) {
@@ -67,7 +68,7 @@ export class MusicSubscription {
 				/*
 					Once destroyed, stop the subscription
 				*/
-				this.stop();
+				this.clear();
 			} else if (
 				!this.readyLock &&
 				(newState.status === VoiceConnectionStatus.Connecting || newState.status === VoiceConnectionStatus.Signalling)
@@ -112,18 +113,32 @@ export class MusicSubscription {
 	 * @param track The track to add to the queue
 	 */
 	public enqueue(track: Track) {
-		if (this.enqueueLock) { return; }
-		this.queue.push(track);
+		if (this.enqueueLock) { return; } // think this needs to be changed to a wait and retry
+		this.MusicQueue.push(track);
 		this.processQueue();
 	}
 
 	/**
 	 * Stops audio playback and empties the queue
 	 */
-	public stop() {
-		this.queueLock = this.enqueueLock = true
-		this.queue = [];
+	public clear() {
+		this.queueLock = this.enqueueLock = true;
+		this.MusicQueue.clear();
 		this.audioPlayer.stop(true);
+		this.queueLock = false;
+	}
+
+	public skip() {
+		this.queueLock = this.enqueueLock = true;
+		this.audioPlayer.stop(true);
+		this.queueLock = this.enqueueLock = false;
+		this.processQueue();
+	}
+
+	public jump(index: number) {
+		this.queueLock = true;
+		this.MusicQueue.queueIndex = index;
+		this.audioPlayer.stop()
 		this.queueLock = false;
 	}
 
@@ -132,20 +147,26 @@ export class MusicSubscription {
 	 */
 	private async processQueue(): Promise<void> {
 		// If the queue is locked (already being processed), is empty, or the audio player is already playing something, return
-		if (this.queueLock || this.audioPlayer.state.status !== AudioPlayerStatus.Idle || this.queue.length === 0) {
+		if (this.queueLock || this.audioPlayer.state.status !== AudioPlayerStatus.Idle || this.MusicQueue.length === 0) {
 			return;
 		}
+
+		// Try to take the next item from the queue. If it's the end of the queue, return
+		const nextTrack = this.MusicQueue.process();
+
+		if (nextTrack === undefined) {
+			return;
+		}
+
 		// Lock the queue to guarantee safe access
 		this.queueLock = true;
 
-		// Take the first item from the queue. This is guaranteed to exist due to the non-empty check above.
-		const nextTrack = this.queue.shift()!;
 		try {
 			// Attempt to convert the Track into an AudioResource (i.e. start streaming the video)
 			const resource = await nextTrack.createAudioResource();
 			this.audioPlayer.play(resource);
 			this.queueLock = false;
-		} catch (error) {
+		} catch (error: any) {
 			// If an error occurred, try the next item of the queue instead
 			nextTrack.onError(nextTrack.title, error);
 			this.queueLock = false;

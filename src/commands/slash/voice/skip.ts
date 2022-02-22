@@ -20,9 +20,7 @@ export async function run(e: cmdEvent) {
 
     if (!userInCorrectChannel(e, subscription)) return;
     
-    // Calling .stop() on an AudioPlayer causes it to transition into the Idle state. Because of a state transition
-    // listener defined in music/subscription.ts, transitions into the Idle state mean the next track from the queue
-    // will be loaded and played.
-    subscription.audioPlayer.stop();
+    subscription.skip()
+    
     await e.interaction.reply('Skipped song!');
 }

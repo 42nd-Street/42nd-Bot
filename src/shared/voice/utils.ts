@@ -3,8 +3,9 @@ import {
 	joinVoiceChannel,
 	entersState,
 	VoiceConnectionStatus,
+	DiscordGatewayAdapterCreator,
 } from '@discordjs/voice';
-import { createDiscordJSAdapter } from './adapter';
+
 
 import https from 'https';
 import { PassThrough } from 'stream';
@@ -23,7 +24,7 @@ export async function getStream(url: string) {
 export async function getSubscription(e: cmdEvent): Promise<MusicSubscription> {
 	if (!e.interaction.guildId) { throw new Error('Not in guild!'); }
 
-	await e.interaction.defer();
+	await e.interaction.deferReply();
 
 	let subscription = subscriptions.get(e.interaction.guildId)
 
@@ -34,7 +35,7 @@ export async function getSubscription(e: cmdEvent): Promise<MusicSubscription> {
 				joinVoiceChannel({
 					channelId: channel.id,
 					guildId: channel.guild.id,
-					adapterCreator: createDiscordJSAdapter(channel as VoiceChannel),
+					adapterCreator: channel.guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
 				}),
 			);
 			subscription.voiceConnection.on('error', console.warn);

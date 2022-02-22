@@ -32,6 +32,7 @@ export class Track implements TrackData {
 	public readonly url: string;
 	public readonly title: string;
 	public readonly type: TrackType
+	//public length: string;
 	public readonly onStart: (title: string) => void;
 	public readonly onFinish: (title: string) => void;
 	public readonly onError: (title: string, error: Error) => void;
